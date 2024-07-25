@@ -25,7 +25,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tag'
+                  $ref: '#/components/schemas/Label'
         '400':
           description: Invalid input
 
@@ -36,9 +36,7 @@ components:
         corpus:
           type: string
 
-    Tag:
+    Label:
       properties:
-        key:
-          type: string
         value:
           type: string
