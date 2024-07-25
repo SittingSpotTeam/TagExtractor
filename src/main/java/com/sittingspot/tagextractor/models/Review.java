@@ -1,5 +1,4 @@
 package com.sittingspot.tagextractor.models;
 
-public class Review {
-    
+public record Review (String corpus){
 }

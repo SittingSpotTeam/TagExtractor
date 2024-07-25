@@ -1,4 +1,4 @@
 package com.sittingspot.tagextractor.models;
 
-public record Tag(String key, String value) {
+public record Label(String value) {
 }
