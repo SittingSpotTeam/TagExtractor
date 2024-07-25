@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
 @RequestMapping("tag-extractor/api/v1")
 public class TagExtactorController {
     private List<String> tag_list = Arrays.asList(
-                                        "Comfortable","Uncomfortable", "Good", "Bad",
+                                        "Comfortable","Uncomfortable", "Good", "Bad","nice",
                                             "Clean", "Dirty", "Noisy", "Quiet", "Water", "Fountain",
                                             "Fantastic","Amazing","Perfect","Terrific","Superb","Delightful","Incredible",
                                             "Terrible","Horrible","Broken","Poor","Dreadful","Awful",
