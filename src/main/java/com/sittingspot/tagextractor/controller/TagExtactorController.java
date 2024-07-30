@@ -12,6 +12,8 @@ import java.util.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths; 
 
 @RestController
 @RequestMapping("tag-extractor/api/v1")
@@ -31,6 +33,9 @@ public class TagExtactorController {
 
     // private SentimentAnalysisDTO sentimentAnalysis(Review review){
     private SentimentAnalysisDTO sentimentAnalysis(Review review){
+
+        Path path = Paths.get("/AnalyzeSentiment.py");
+        System.out.println(path.toAbsolutePath());
         System.out.println(review);
 
         //extracting labels
@@ -46,7 +51,9 @@ public class TagExtactorController {
         //computing score
         try {
             // Use ProcessBuilder to start the Python process
-            ProcessBuilder pb = new ProcessBuilder("python3", "src/main/java/com/sittingspot/tagextractor/controller/AnalyzeSentiment.py", review.corpus());
+            // ProcessBuilder pb = new ProcessBuilder("python3", "src/main/java/com/sittingspot/tagextractor/controller/AnalyzeSentiment.py", review.corpus());
+            ProcessBuilder pb = new ProcessBuilder("python3", path.toAbsolutePath().toString(), review.corpus());
+            
             pb.redirectErrorStream(true); // Redirect error stream to output stream
             Process process = pb.start();
 
