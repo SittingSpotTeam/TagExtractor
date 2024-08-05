@@ -26,21 +26,21 @@ public class TagExtactorController {
                                             "Hate","Love","Like","Dislike");
 
     @PostMapping
-    public List<Label> search(@RequestBody Review review) {
+    public List<Label> search(@RequestBody String corpus) {
         //TODO MAYBE CHANGE FORMAT; SEE WHAT TO DO WITH THE SCORE
-        return new ArrayList<Label>(sentimentAnalysis(review).labels());
+        return new ArrayList<Label>(sentimentAnalysis(corpus).labels());
     }
 
     // private SentimentAnalysisDTO sentimentAnalysis(Review review){
-    private SentimentAnalysisDTO sentimentAnalysis(Review review){
+    private SentimentAnalysisDTO sentimentAnalysis(String corpus){
 
         Path path = Paths.get("/AnalyzeSentiment.py");
         System.out.println(path.toAbsolutePath());
-        System.out.println(review);
+        System.out.println(corpus);
 
         //extracting labels
         Set<Label> extracted_labels = new HashSet<Label>();
-        String corpus = review.corpus().toLowerCase();
+        corpus = corpus.toLowerCase();
         for (String st : tag_list) {
             if(corpus.contains(st.toLowerCase())){
                 extracted_labels.add(new Label(st));
@@ -52,7 +52,7 @@ public class TagExtactorController {
         try {
             // Use ProcessBuilder to start the Python process
             // ProcessBuilder pb = new ProcessBuilder("python3", "src/main/java/com/sittingspot/tagextractor/controller/AnalyzeSentiment.py", review.corpus());
-            ProcessBuilder pb = new ProcessBuilder("python3", path.toAbsolutePath().toString(), review.corpus());
+            ProcessBuilder pb = new ProcessBuilder("python3", path.toAbsolutePath().toString(), corpus);
             
             pb.redirectErrorStream(true); // Redirect error stream to output stream
             Process process = pb.start();
