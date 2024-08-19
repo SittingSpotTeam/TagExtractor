@@ -1,0 +1,1 @@
+docker build . -t sittingspotapp/tagextractor:1.1-dev && docker push sittingspotapp/tagextractor:1.1-dev
