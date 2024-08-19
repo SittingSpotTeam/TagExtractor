@@ -1,23 +1,32 @@
 package com.sittingspot.tagextractor.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sittingspot.tagextractor.DTO.SentimentAnalysisDTO;
 import com.sittingspot.tagextractor.models.Review;
 import com.sittingspot.tagextractor.models.Label;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.nio.file.Paths; 
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("tag-extractor/api/v1")
+@RequestMapping("/api/v1")
 public class TagExtactorController {
+
     private List<String> tag_list = Arrays.asList(
                                         "Comfortable","Uncomfortable", "Good", "Bad","nice",
                                             "Clean", "Dirty", "Noisy", "Quiet", "Water", "Fountain",
@@ -25,10 +34,30 @@ public class TagExtactorController {
                                             "Terrible","Horrible","Broken","Poor","Dreadful","Awful",
                                             "Hate","Love","Like","Dislike");
 
-    @PostMapping
-    public List<Label> search(@RequestBody String corpus) {
+    @Value("${sittingspot.sittingspotdl.url}")
+    private String sittingspotdlurl;
+
+    @PostMapping("/{Id}")
+    public List<Label> search(@PathVariable String Id, @RequestBody String corpus) throws IOException, InterruptedException {
         //TODO MAYBE CHANGE FORMAT; SEE WHAT TO DO WITH THE SCORE
-        return new ArrayList<Label>(sentimentAnalysis(corpus).labels());
+        var labels = new ArrayList<Label>(sentimentAnalysis(corpus).labels());
+        var labels_array = labels.stream().map(x -> x.value());
+        String labels_string = "";
+
+        try {
+            labels_string = new ObjectMapper().writeValueAsString(labels_array);
+        } catch (JsonProcessingException e) {
+            labels_string = "[";
+            labels_string.concat(labels_array.collect(Collectors.joining(",")));
+            labels_string.concat("]");
+        }
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create("http://" + sittingspotdlurl + "/"+Id))
+                .PUT(HttpRequest.BodyPublishers.ofString(labels_string))
+                .build();
+        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        return labels;
     }
 
     // private SentimentAnalysisDTO sentimentAnalysis(Review review){
