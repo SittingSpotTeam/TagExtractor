@@ -4,18 +4,25 @@ info:
   description: Service that extracts tag from the reviews
   version: 1.0.0
 servers:
-  - url: https://tag-logic/api/v1
+  - url: http://tagextractor/api/v1
 paths:
-  /:
+  /{Id}:
     post:
       summary: Tag extractor
       description: Extracts tag from the reviews of a sitting spot
       operationId: tagExtractor
+      parameters:
+        - name: Id
+          in: path
+          description: ID of the sitting spot
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Review'
+              type: string
         required: true
       responses:
         '200':
